@@ -163,8 +163,9 @@ if ($dateChosen) {
 ?>
 	</div> <!--  end col-md-3 -->
 	<div class="col-md-6 col-md-offset-1">
-		<p>Made for <a href="http://reddit.com/r/nba">/r/NBA</a> by <a href="http://reddit.com/user/jorgegil96">/u/jorgegil96</a><br>
-		Thanks to <a href="http://reddit.com/user/imeanYOLOright">/u/imeanYOLOright</a> for his original Excel design.</p>
+		<p>Made for <a href="http://reddit.com/r/nba">/r/NBA</a> by <a href="http://reddit.com/user/jorgegil96">/u/jorgegil96.</a><br>
+		Thanks to <a href="http://reddit.com/user/imeanYOLOright">/u/imeanYOLOright</a> for his original Excel design
+		and to the creator of <a href="https://github.com/seemethere/nba_py">NBA_PY</a> and its incredible documentation of the NBA API.</p>
 		<br>
 		Report any issues on <a href="https://github.com/jorgegil96/boxscoregenerator">Github <i class="mdi mdi-github-circle"></i></a> or send me a <a href="http://reddit.com/user/jorgegil96">PM</a>.
 	</div>
