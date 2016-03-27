@@ -390,7 +390,7 @@ $textToReddit .= "
 		$textToReddit .= "
 ||
 |:-:|
-|^Generator: [^Excel](https://drive.google.com/file/d/0B81kEjcFfuavUmUyUk5OLVAtYzg/view?usp=sharing) ^by ^/u/imeanYOLOright  ^&  [^Web](http://nbaboxscoregenerator) ^by ^/u/jorgegil96|";
+|^Generator: [^Excel](https://drive.google.com/file/d/0B81kEjcFfuavUmUyUk5OLVAtYzg/view?usp=sharing) ^by ^/u/imeanYOLOright  ^&  [^Web](http://nbaboxscoregenerator.tk) ^by ^/u/jorgegil96|";
 		?>
 		</table>
 		</div>
