@@ -183,8 +183,41 @@ if (isset($_GET['gameID'])) {
 
 	// MOVE TO TEAM STATS
 	$teamData = $boxscoreData->resultSets[1]->rowSet;
+	$nameA = $teamData[0][2];
 	$PTSA = $teamData[0][23];
+	$FGMA = $teamData[0][6];
+	$FGAA = $teamData[0][7];
+	$FG_PCTA = $teamData[0][8];
+	$FG3MA = $teamData[0][9];
+	$FG3AA = $teamData[0][10];
+	$FG3_PCTA = $teamData[0][11];
+	$FTMA = $teamData[0][12];
+	$FTAA = $teamData[0][13];
+	$FT_PCTA = $teamData[0][14];
+	$REBA = $teamData[0][17];
+	$ASTA = $teamData[0][18];
+	$STLA = $teamData[0][19];
+	$BLKA = $teamData[0][20];
+	$TOA = $teamData[0][21];
+	$PFA = $teamData[0][22];
+
+	$nameB = $teamData[1][2];
 	$PTSB = $teamData[1][23];
+	$FGMB = $teamData[1][6];
+	$FGAB = $teamData[1][7];
+	$FG_PCTB = $teamData[1][8];
+	$FG3MB = $teamData[1][9];
+	$FG3AB = $teamData[1][10];
+	$FG3_PCTB = $teamData[1][11];
+	$FTMB = $teamData[1][12];
+	$FTAB = $teamData[1][13];
+	$FT_PCTB = $teamData[1][14];
+	$REBB = $teamData[1][17];
+	$ASTB = $teamData[1][18];
+	$STLB = $teamData[1][19];
+	$BLKB = $teamData[1][20];
+	$TOB = $teamData[1][21];
+	$PFB = $teamData[1][22];
 
 	// MOVE TO PLAYER STATS
 	$boxscoreData = $boxscoreData->resultSets[0]->rowSet;
@@ -213,6 +246,23 @@ if (isset($_GET['gameID'])) {
 |[](/".$abbrevA.") **".$PTSA." - ".$PTSB."** [](/".$abbrevB.")|
 |**Box Score: [NBA](http://www.nba.com/games/".$date."/".$abbrevA.$abbrevB."/gameinfo.html#nbaGIboxscore)**|
 |&nbsp;|
+";
+
+		$textToReddit .= "
+||
+|:-:|
+|&nbsp;|
+|**TEAM STATS**|
+
+|||||||||||||||
+|:-|:-:|-:|:-|-:|:-|-:|:-|:-:|:-:|:-:|:-:|:-:|:-:|
+|**Teams**|**PTS**|**FG**|**%**|**3P**|**%**|**FT**|**%**|**REB**|**AST**|**STL**|**BLK**|**TO**|**PF**|
+";
+
+		$textToReddit .= "|".$nameA."|".$PTSA."|".$FGMA."-".$FGAA."|".$FG_PCTA."|".$FG3MA."-".$FG3AA."|".$FG3_PCTA."|".$FTMA."-".$FTAA."|".$FT_PCTA."|".$REBA."|".$ASTA."|".$STLA."|".$BLKA."|".$TOA."|".$PFA."|
+";
+
+		$textToReddit .= "|".$nameB."|".$PTSB."|".$FGMB."-".$FGAB."|".$FG_PCTB."|".$FG3MB."-".$FG3AB."|".$FG3_PCTB."|".$FTMB."-".$FTAB."|".$FT_PCTB."|".$REBB."|".$ASTB."|".$STLB."|".$BLKB."|".$TOB."|".$PFB."|
 ";
 
 		$textToReddit .= 
