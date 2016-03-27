@@ -184,6 +184,13 @@ if (isset($_GET['gameID'])) {
 
 	// MOVE TO TEAM STATS
 	$teamData = $boxscoreData->resultSets[1]->rowSet;
+
+	$team2A = $teamData[0][2];
+	$abbrev2A = $teamData[0][3];
+	$team2B = $teamData[1][2];
+	$abbrev2B = $teamData[1][3];
+
+
 	$nameA = $teamData[0][2];
 	$PTSA = $teamData[0][23];
 	$FGMA = $teamData[0][6];
@@ -244,7 +251,7 @@ if (isset($_GET['gameID'])) {
 
 ||
 |:-:|
-|[](/".$abbrevA.") **".$PTSA." - ".$PTSB."** [](/".$abbrevB.")|
+|[](/".$abbrev2A.") **".$PTSA." - ".$PTSB."** [](/".$abbrev2B.")|
 |**Box Score: [NBA](http://www.nba.com/games/".$date."/".$abbrevA.$abbrevB."/gameinfo.html#nbaGIboxscore)**|
 |&nbsp;|
 ";
