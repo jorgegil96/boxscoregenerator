@@ -1,3 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Bosxcore Generator</title>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+	<link rel="stylesheet" href="https://cdn.materialdesignicons.com/1.5.54/css/materialdesignicons.min.css">
+
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+
+	<style type="text/css">
+		.mdi::before {
+		    font-size: 24px;
+		    line-height: 14px;
+		}
+		.btn .mdi::before {
+		    position: relative;
+		    top: 4px;
+		}
+		.btn-xs .mdi::before {
+		    font-size: 18px;
+		    top: 3px;
+		}
+		.btn-sm .mdi::before {
+		    font-size: 18px;
+		    top: 3px;
+		}
+		.dropdown-menu .mdi {
+		    width: 18px;
+		}
+		.dropdown-menu .mdi::before {
+		    position: relative;
+		    top: 4px;
+		    left: -8px;
+		}
+		.nav .mdi::before {
+		    position: relative;
+		    top: 4px;
+		}
+		.navbar .navbar-toggle .mdi::before {
+		    position: relative;
+		    top: 4px;
+		    color: #FFF;
+		}
+		.breadcrumb .mdi::before {
+		    position: relative;
+		    top: 4px;
+		}
+		.breadcrumb a:hover {
+		    text-decoration: none;
+		}
+		.breadcrumb a:hover span {
+		    text-decoration: underline;
+		}
+		.alert .mdi::before {
+		    position: relative;
+		    top: 4px;
+		    margin-right: 2px;
+		}
+		.input-group-addon .mdi::before {
+		    position: relative;
+		    top: 3px;
+		}
+		.navbar-brand .mdi::before {
+		    position: relative;
+		    top: 2px;
+		    margin-right: 2px;
+		}
+		.list-group-item .mdi::before {
+		    position: relative;
+		    top: 3px;
+		    left: -3px
+		}
+	</style>
+</head>
+
+
 <?php
 
 // TEXT TO BE PRINTED ONTO THE TEXTAREA
@@ -18,10 +102,19 @@ else {
 
 // GET GAME ID FROM URL
 $gameID = $_GET['gameID'];
+?>
+<body>
+<div class="container">
+	<div class="row">
+			<h1 style="text-align: center; padding-bottom: 10px;">NBA Boxscore Generator for Reddit</h1>
+			<div class="col-md-3 col-md-offset-2">
 
 
-echo "<h1>NBA Boxscore Generator for Reddit</h1>";
-echo "Enter date (YYYY/MM/DD)<br>";
+
+
+
+<?
+
 
 // GAMES DATA TO GET TODAY'S GAMES AND IDs
 $gamesData = json_decode(file_get_contents('http://data.nba.com/data/1h/json/cms/noseason/scoreboard/'.$date.'/games.json'));
@@ -31,8 +124,17 @@ $gamesData = $gamesData->sports_content->games;
 
 <!-- FORM TO CHOOSE DATE -->
 <form action="" method="GET">
-	<input type="text" name="date" value="<?php echo $date; ?>">
-	<input type="submit" value="Enter">
+	<div class="row">
+		<div class="col-md-8" style="padding-right: 5px">
+			<div class="input-group">
+				<span class="input-group-addon" id="basic-addon1">Date</span>
+				<input type="text" class="form-control" style="max-width: 150px;" name="date" placeholder="20160320" value="<?php echo $date; ?>" aria-describedby="basic-addon1">
+			</div>
+		</div>
+		<div class="col-md-1" style="padding-left: 5px">
+			<input type="submit" value="Enter" class="btn btn-primary">
+		</div>
+	</div>
 </form>
 
 <?
@@ -41,21 +143,34 @@ $gamesData = $gamesData->sports_content->games;
 if ($dateChosen) {
 ?>
 	<form action="" method="GET">
-		<select name="gameID">
-		<?
-		foreach ($gamesData->game as $game) {
-			$matchup = $game->visitor->team_key." @ ".$game->home->team_key."<br>";
-			echo "<option value='".$game->id."'>".$matchup."</option>";
-		}
-		?>
-		</select>
-		<input type="hidden" name="date" value="<?php echo $date; ?>"></input>
-		<input type="submit" value="Go!">
+		<div class="row" style="margin-top: 15px">
+			<div class="col-md-8">
+				<select name="gameID">
+				<?
+				foreach ($gamesData->game as $game) {
+					$matchup = $game->visitor->team_key." @ ".$game->home->team_key."<br>";
+					echo "<option value='".$game->id."'>".$matchup."</option>";
+				}
+				?>
+				</select>
+				<input type="hidden" name="date" value="<?php echo $date; ?>"></input>
+				<input type="submit" value="Go!" class="btn btn-primary">
+			</div>
+		</div>
 	</form>
 <?
 }
 ?>
+	</div> <!--  end col-md-3 -->
+	<div class="col-md-6 col-md-offset-1">
+		<p>Made for <a href="http://reddit.com/r/nba">/r/NBA</a> by <a href="http://reddit.com/user/jorgegil96">/u/jorgegil96</a><br>
+		Thanks to <a href="http://reddit.com/user/imeanYOLOright">/u/imeanYOLOright</a> for his original Excel design.</p>
+		<br>
+		Report any issues on <a href="https://github.com/jorgegil96/boxscoregenerator">Github <i class="mdi mdi-github-circle"></i></a> or send me a <a href="http://reddit.com/user/jorgegil96">PM</a>.
+	</div>
+</div>
 <hr>
+
 
 <?
 
@@ -121,24 +236,28 @@ $textToReddit .= "
 
 		// CREATE TABLE
 		?>
-		<table style='text-align: center'>
-			<tr style='font-weight: bold'>
-				<td style='text-align: left'><?php echo $teamA; ?></td>
-				<td>MIN</td>
-				<td>FGM-A</td>
-				<td>3PM-A</td>
-				<td>FTM-A</td>
-				<td>OREB</td>
-				<td>DREB</td>
-				<td>REB</td>
-				<td>AST</td>
-				<td>STL</td>
-				<td>BLK</td>
-				<td>TO</td>
-				<td>PF</td>
-				<td>+/-</td>
-				<td>PTS</td>
-			</tr>
+		<div class="row">
+		<div class="col-md-10 col-md-offset-1">
+		<table class="table table-hover" style='text-align: center'>
+			<thead>
+				<tr style='font-weight: bold'>
+					<th style='text-align: left'><?php echo $teamA; ?></th>
+					<th>MIN</th>
+					<th>FGM-A</th>
+					<th>3PM-A</th>
+					<th>FTM-A</th>
+					<th>OREB</th>
+					<th>DREB</th>
+					<th>REB</th>
+					<th>AST</th>
+					<th>STL</th>
+					<th>BLK</th>
+					<th>TO</th>
+					<th>PF</th>
+					<th>+/-</th>
+					<th>PTS</th>
+				</tr>
+			</thead>
 		<?
 		foreach ($boxscoreData as $playerData) {
 			$city = $playerData[3];
@@ -167,23 +286,25 @@ $textToReddit .= "
 			// SHOW ROW WITH NEW TEAM ONLY ONCE
 			if ($city == $teamB && !$done) {
 				?>
+				<thead>
 				<tr style='font-weight: bold'>
-					<td style='text-align: left'><?php echo $teamB; ?></td>
-					<td>MIN</td>
-					<td>FGM-A</td>
-					<td>3PM-A</td>
-					<td>FTM-A</td>
-					<td>OREB</td>
-					<td>DREB</td>
-					<td>REB</td>
-					<td>AST</td>
-					<td>STL</td>
-					<td>BLK</td>
-					<td>TO</td>
-					<td>PF</td>
-					<td>+/-</td>
-					<td>PTS</td>
+					<th style='text-align: left'><?php echo $teamB; ?></th>
+					<th>MIN</th>
+					<th>FGM-A</th>
+					<th>3PM-A</th>
+					<th>FTM-A</th>
+					<th>OREB</th>
+					<th>DREB</th>
+					<th>REB</th>
+					<th>AST</th>
+					<th>STL</th>
+					<th>BLK</th>
+					<th>TO</th>
+					<th>PF</th>
+					<th>+/-</th>
+					<th>PTS</th>
 				</tr>
+				</thead>
 				<?
 
 				$textToReddit .= "**[](/".$abbrevB.") ".$teamB."**|**MIN**|**FGM-A**|**3PM-A**|**FTM-A**|**ORB**|**DRB**|**REB**|**AST**|**STL**|**BLK**|**TO**|**PF**|**+/-**|**PTS**|
@@ -192,7 +313,6 @@ $textToReddit .= "
 				$done = true;
 			}
 
-			
 			echo "<tr>";
 			echo "<td style='text-align: left'>".$player."</td>";
 			echo "<td>".$MIN."</td>";
@@ -222,10 +342,16 @@ $textToReddit .= "
 |^Generator: [^Excel](https://drive.google.com/file/d/0B81kEjcFfuavUmUyUk5OLVAtYzg/view?usp=sharing) ^by ^/u/imeanYOLOright  ^&  [^Web](http://nbaboxscoregenerator) ^by ^/u/jorgegil96|";
 		?>
 		</table>
+		</div>
+		</div>
 		<hr>
-		<h2>Copy text below to Reddit</h2>
-		<p>Use Ctrl-A</p>
-		<textarea cols="150" rows="50"><?php echo $textToReddit; ?></textarea>
+		<div class="row">
+			<div class="col-md-10 col-md-offset-1">
+				<h2>Copy text below to Reddit</h2>
+				<p>Use Ctrl-A</p>
+				<textarea cols="130" rows="50"><?php echo $textToReddit; ?></textarea>
+			</div>
+		</div>
 		<?
 	} else {
 		echo "<h3> Boxscore not ready, wait for the game to end.</h3>";
@@ -238,7 +364,10 @@ function short($player) {
 }
 
 ?>
-
+</div>
+</div>
+</body>
+</html>
 
 
 
