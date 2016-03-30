@@ -139,15 +139,8 @@ if ($dateChosen) {
 							<select name="gameID">
 							<?
 							foreach ($gamesData->game as $game) {
-								$vKey = $game->visitor->team_key;
-								$hKey = $game->home->team_key;
-								$matchup = $vKey." @ ".$hKey;
-
-								if ($vKey.$hKey == $gameID) {
-									echo "<option value='".$vKey.$hKey."' selected>".$matchup."</option>";
-								} else {
-									echo "<option value='".$vKey.$hKey."'>".$matchup."</option>";
-								}
+								$matchup = $game->visitor->team_key." @ ".$game->home->team_key;
+								echo "<option value='".$game->visitor->team_key.$game->home->team_key."'>".$matchup."</option>";
 							}
 							?>
 							</select>
@@ -157,9 +150,7 @@ if ($dateChosen) {
 					</div>
 				</form>
 				<p>*Now with LIVE results!</p>
-<?
-}
-?>
+
 			</div>
 			<div class="col-md-6 col-md-offset-1">
 				<p>Made for <a href="http://reddit.com/r/nba">/r/NBA</a> by <a href="http://reddit.com/user/jorgegil96">/u/jorgegil96.</a><br>
@@ -172,27 +163,89 @@ if ($dateChosen) {
 		<hr>
 
 <?
+// Get HTML from NBA.com
+$html = file_get_html('http://www.nba.com/games/'.noDash($date).'/'.$gameID.'/gameinfo.html');
+
+// Navigate DOM to box scores tables
+$teamA = $html->find("#nbaGIboxscore", 0)->children(2); // Team A table
+$teamB = $html->find("#nbaGIboxscore", 0)->children(3); // Team B table
+
+// Form 2D Array with box score data for each team
+$teamABox = getBoxScore($teamA); 
+$teamBBox = getBoxScore($teamB);
+
+$awayScore = $teamABox[count($teamABox) - 2][16];
+$homeScore = $teamBBox[count($teamBBox) - 2][16];;
+
+}
+
+//printBoxScore($teamABox);
+//printBoxScore($teamBBox);
+
+/*
+ * Function getBoxScore
+ *
+ * This function forms a 2D array containing box score data.
+ * 1 Row for each player (> 7 and <= 15) plus one for team totals.
+ * Columns are: Name, POS, MIN, FGM-A, 3PM-A, FTM-A, +/-, OFF, DEF, TOT
+ * AST, PF, ST, TO, BS, BA, PTS except for when a player doesn't play,
+ * in that case columns while be: Name and Comment.
+ *
+ * @param (DOM object)
+ * @return (array)
+*/
+function getBoxScore($teamData) {
+	$teamArray = array();
+	$i = 0;
+	$rowCount = count($teamData->find('tr'));
+	foreach ($teamData->find('tr') as $row) {
+		// Ignore first 3 rows
+		if ($i >= 3) {
+			$teamArray[$i - 3] = array();
+			$j = 0;
+			for ($j = 0; $j < 17; $j++) {
+				$col = $row->find('td', $j);
+				if ($col != "") {
+					if ($j == 0 && $i != $rowCount - 2) {
+						$teamArray[$i - 3][$j] = $col->find('a', 0)->innertext;
+					} else {
+						$teamArray[$i - 3][$j] = $col->innertext;
+					}
+				} else {
+					$teamArray[$i - 3][$j] = "-";
+				}
+			}
+		}
+		$i++;
+	}
+	return $teamArray;
+}
+
+/*
+ * Function printBoxScore
+ *
+ * This function prints a 2D array containing a team's box score
+ * data.
+ *
+ * @param (array)
+*/
+function printBoxScore($teamArray) {
+	$lenI = count($teamArray);
+	for ($i = 0; $i < $lenI; $i++) {
+		$lenJ = count($teamArray[$i]);
+		for ($j = 0; $j < $lenJ; $j++) { 
+			echo $teamArray[$i][$j]." | ";
+		}
+		echo $i."<br>";
+	}
+}
+
+?>
 
 
+<?php
 // SHOW BOXSCORE AND TEXTAREA ONLY AFTER SUBMITTING PREVIOUS FORM
-if(isset($_GET['gameID'])) {
-	// Get HTML from NBA.com
-	$html = file_get_html('http://www.nba.com/games/'.noDash($date).'/'.$gameID.'/gameinfo.html');
-
-	// Navigate DOM to box scores tables
-	$teamA = $html->find("#nbaGIboxscore", 0)->children(2); // Team A table
-	$teamB = $html->find("#nbaGIboxscore", 0)->children(3); // Team B table
-
-	// Form 2D Array with box score data for each team
-	$teamABox = getBoxScore($teamA); 
-	$teamBBox = getBoxScore($teamB);
-
-	$awayScore = $teamABox[count($teamABox) - 2][16];
-	$homeScore = $teamBBox[count($teamBBox) - 2][16];
-
-	//printBoxScore($teamABox);
-	//printBoxScore($teamBBox);
-
+if (isset($_GET['gameID'])) {
 	foreach ($gamesData->game as $game) {
 		if (substr($game->game_url, 9) == $gameID) {
 			$teamAwayName = $game->visitor->nickname;
@@ -219,16 +272,6 @@ $textToReddit .= "
 |:-:|
 |^Generator: [^Excel](https://drive.google.com/file/d/0B81kEjcFfuavUmUyUk5OLVAtYzg/view?usp=sharing) ^by ^imeanYOLOright  ^&  ^Web(nbaboxscoregenerator ^.tk) ^by ^jorgegil96|";
 
-?>
-	<div class="row">
-			<div class="col-md-10 col-md-offset-1">
-				<h2>Copy text below to Reddit</h2>
-				<p>Use Ctrl-A</p>
-				<textarea cols="130" rows="50"><?php echo $textToReddit; ?></textarea>
-			</div>
-		</div>
-	</div>
-<?
 }
 
 
@@ -359,63 +402,7 @@ function printTable($teamAwayName, $teamAwayShort, $teamHomeName, $teamHomeShort
 	return $textToReddit;
 }
 
-/*
- * Function getBoxScore
- *
- * This function forms a 2D array containing box score data.
- * 1 Row for each player (> 7 and <= 15) plus one for team totals.
- * Columns are: Name, POS, MIN, FGM-A, 3PM-A, FTM-A, +/-, OFF, DEF, TOT
- * AST, PF, ST, TO, BS, BA, PTS except for when a player doesn't play,
- * in that case columns while be: Name and Comment.
- *
- * @param (DOM object)
- * @return (array)
-*/
-function getBoxScore($teamData) {
-	$teamArray = array();
-	$i = 0;
-	$rowCount = count($teamData->find('tr'));
-	foreach ($teamData->find('tr') as $row) {
-		// Ignore first 3 rows
-		if ($i >= 3) {
-			$teamArray[$i - 3] = array();
-			$j = 0;
-			for ($j = 0; $j < 17; $j++) {
-				$col = $row->find('td', $j);
-				if ($col != "") {
-					if ($j == 0 && $i != $rowCount - 2) {
-						$teamArray[$i - 3][$j] = $col->find('a', 0)->innertext;
-					} else {
-						$teamArray[$i - 3][$j] = $col->innertext;
-					}
-				} else {
-					$teamArray[$i - 3][$j] = "-";
-				}
-			}
-		}
-		$i++;
-	}
-	return $teamArray;
-}
 
-/*
- * Function printBoxScore
- *
- * This function prints a 2D array containing a team's box score
- * data.
- *
- * @param (array)
-*/
-function printBoxScore($teamArray) {
-	$lenI = count($teamArray);
-	for ($i = 0; $i < $lenI; $i++) {
-		$lenJ = count($teamArray[$i]);
-		for ($j = 0; $j < $lenJ; $j++) { 
-			echo $teamArray[$i][$j]." | ";
-		}
-		echo $i."<br>";
-	}
-}
 
 function short($player) {
 	return substr($player, 0, 1).". ".strstr($player, " ");
@@ -431,6 +418,14 @@ function dash($date) {
 
 ?>
 
+		<div class="row">
+			<div class="col-md-10 col-md-offset-1">
+				<h2>Copy text below to Reddit</h2>
+				<p>Use Ctrl-A</p>
+				<textarea cols="130" rows="50"><?php echo $textToReddit; ?></textarea>
+			</div>
+		</div>
+	</div>
 	<script>
 	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -444,3 +439,26 @@ function dash($date) {
 </body>
 
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
