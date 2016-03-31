@@ -27,12 +27,13 @@ if (isset($_GET['gameID'])) {
 }
 
 // Find box score status
+// != 1 means box score is available
 $ready = false;
 foreach ($gamesData->game as $game) {
 	$vKey = $game->visitor->team_key;
 	$hKey = $game->home->team_key;
 	if ($vKey.$hKey == $gameID) {
-		if ($game->period_time->game_status ==1)
+		if ($game->period_time->game_status == 1)
 			$ready = false;
 		else
 			$ready = true;
@@ -46,8 +47,8 @@ if ($ready) {
 	$html = file_get_html('http://www.nba.com/games/'.noDash($date).'/'.$gameID.'/gameinfo.html');
 
 	// Navigate DOM to box scores tables
-	$teamA = $html->find("#nbaGIboxscore", 0)->children(2); // Team A table
-	$teamB = $html->find("#nbaGIboxscore", 0)->children(3); // Team B table
+	$teamA = $html->find("#nbaGITeamStats", 0); // Team A table
+	$teamB = $html->find("#nbaGITeamStats", 1); // Team B table
 
 	// Form 2D Array with box score data for each team
 	$awayBox = getBoxScore($teamA); 
@@ -69,6 +70,8 @@ if ($ready) {
 			break;
 		}
 	}
+
+	$textToReddit = getRedditText($awayShort, $awayName, $awayScore, $awayBox, $homeShort, $homeName, $homeScore, $homeBox);
 }
 
 /*
@@ -190,8 +193,58 @@ function printHTMLTable($name, $short, $boxscore) {
 			</tbody>
 		</table>
 	</div>
+	</div>
 <?php
 }
+
+function getRedditText($awayShort, $awayName, $awayScore, $awayBox, $homeShort, $homeName, $homeScore, $homeBox) {
+	$text = "|
+|
+
+||
+|:-:|
+|[](/".$awayShort.") **".$awayScore." - ".$homeScore."** [](/".$homeShort.")|
+|**Box Score: [NBA](http://www.nba.com/games/20160330/".$awayShort.$homeShort."/gameinfo.html#nbaGIboxscore)**|
+";
+
+	$text .= "
+||||||||||||||||
+|:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+**[](/".$awayShort.") ".$awayName."**|**MIN**|**FGM-A**|**3PM-A**|**FTM-A**|**+/-**|**ORB**|**DRB**|**REB**|**AST**|**PF**|**STL**|**TO**|**BLK**|**PTS**|";
+
+	$text .= getTableText($awayBox);
+
+	$text .= "
+||||||||||||||||
+|:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+**[](/".$homeShort.") ".$homeName."**|**MIN**|**FGM-A**|**3PM-A**|**FTM-A**|**+/-**|**ORB**|**DRB**|**REB**|**AST**|**PF**|**STL**|**TO**|**BLK**|**PTS**|";
+
+	$text .= getTableText($homeBox);
+
+	$text .= "
+||
+|:-:|
+|^Generator: [^Excel](https://drive.google.com/file/d/0B81kEjcFfuavUmUyUk5OLVAtYzg/view?usp=sharing) ^by ^imeanYOLOright  ^&  ^Web(nbaboxscoregenerator ^.tk) ^by ^jorgegil96|";
+
+	return $text;
+
+}
+
+function getTableText($box) {
+	$text = "";
+	$lenI = count($box);
+	for ($i = 0; $i < $lenI - 1; $i++) {
+		$lenJ = count($box[$i]);
+		for ($j = 0; $j < $lenJ; $j++) {
+			if ($j != 1 && $j != 13) {
+				$text .= $box[$i][$j]."|";
+			}
+		}
+		$text .= "\n";
+	}
+	return $text;
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -320,7 +373,7 @@ function printHTMLTable($name, $short, $boxscore) {
 						</div>
 					</div>
 				</form>
-				<p>*Now with LIVE results!</p>
+				<p><B>Now with LIVE results!</B></p>
 
 			</div>
 			<div class="col-md-6 col-md-offset-1">
