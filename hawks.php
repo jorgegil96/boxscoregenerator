@@ -71,7 +71,7 @@ if ($ready) {
 		}
 	}
 
-	$textToReddit = getRedditText($awayShort, $awayName, $awayScore, $awayBox, $homeShort, $homeName, $homeScore, $homeBox);
+	$textToReddit = getRedditText($awayShort, $awayName, $awayScore, $awayBox, $homeShort, $homeName, $homeScore, $homeBox, $date);
 }
 
 /*
@@ -197,11 +197,11 @@ function printHTMLTable($name, $short, $boxscore) {
 <?php
 }
 
-function getRedditText($awayShort, $awayName, $awayScore, $awayBox, $homeShort, $homeName, $homeScore, $homeBox) {
+function getRedditText($awayShort, $awayName, $awayScore, $awayBox, $homeShort, $homeName, $homeScore, $homeBox, $date) {
 	$text = "||
 |:-:|
 |".$awayName." [](/".$awayShort.") **".$awayScore." - ".$homeScore."** [](/".$homeShort.") ".$homeName."|
-|**Box Score: [NBA](http://www.nba.com/games/20160326/".$awayShort.$homeShort."/gameinfo.html#nbaGIboxscore)**|
+|**Box Score: [NBA](http://www.nba.com/games/".noDash($date)."/".$awayShort.$homeShort."/gameinfo.html#nbaGIboxscore)**|
 ";
 
 	$text .= "
