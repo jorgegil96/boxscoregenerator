@@ -42,6 +42,9 @@ foreach ($gamesData->game as $game) {
 	}
 }
 
+// DISABLE UNTIL NEW SCRAPPER IS READY
+$ready = false;
+
 if ($ready) {
 	// Get HTML from NBA.com
 	$html = file_get_html('http://www.nba.com/games/'.noDash($date).'/'.$gameID.'/gameinfo.html');
@@ -177,7 +180,7 @@ function printHTMLTable($name, $short, $boxscore) {
 <?php
 		for ($j = 0; $j < $lenJ; $j++) {
 			// Don't show POS or BA
-			if ($j != 1 && $j != 13) {
+			if ($j != 1 && $j != 15) {
 				if ($j == 0) {
 					echo "<td style='text-align: left'>".$boxscore[$i][$j]."</td>";
 				} else {
@@ -210,21 +213,23 @@ function getRedditText($awayShort, $awayName, $awayScore, $awayBox, $homeShort, 
 	$text .= "
 ||||||||||||||||
 |:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-**[](/".$awayShort.") ".$awayName."**|**MIN**|**FGM-A**|**3PM-A**|**FTM-A**|**+/-**|**ORB**|**DRB**|**REB**|**AST**|**PF**|**STL**|**TO**|**BLK**|**PTS**|";
+**[](/".$awayShort.") ".$awayName."**|**MIN**|**FGM-A**|**3PM-A**|**FTM-A**|**+/-**|**ORB**|**DRB**|**REB**|**AST**|**PF**|**STL**|**TO**|**BLK**|**PTS**|
+";
 
 	$text .= getTableText($awayBox);
 
 	$text .= "
 ||||||||||||||||
 |:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-**[](/".$homeShort.") ".$homeName."**|**MIN**|**FGM-A**|**3PM-A**|**FTM-A**|**+/-**|**ORB**|**DRB**|**REB**|**AST**|**PF**|**STL**|**TO**|**BLK**|**PTS**|";
+**[](/".$homeShort.") ".$homeName."**|**MIN**|**FGM-A**|**3PM-A**|**FTM-A**|**+/-**|**ORB**|**DRB**|**REB**|**AST**|**PF**|**STL**|**TO**|**BLK**|**PTS**|
+";
 
 	$text .= getTableText($homeBox);
 
 	$text .= "
 ||
 |:-:|
-|^Generator: [^Excel](https://drive.google.com/file/d/0B81kEjcFfuavUmUyUk5OLVAtYzg/view?usp=sharing) ^by ^imeanYOLOright  ^&  ^Web(nbaboxscoregenerator ^.tk) ^by ^jorgegil96|";
+|^Generator: [^Excel](https://drive.google.com/file/d/0B81kEjcFfuavUmUyUk5OLVAtYzg/view?usp=sharing) ^by ^/u/imeanYOLOright  ^&  ^Web(nbaboxscoregenerator ^.tk) ^by ^/u/jorgegil96|";
 
 	return $text;
 
@@ -236,7 +241,7 @@ function getTableText($box) {
 	for ($i = 0; $i < $lenI - 1; $i++) {
 		$lenJ = count($box[$i]);
 		for ($j = 0; $j < $lenJ; $j++) {
-			if ($j != 1 && $j != 13) {
+			if ($j != 1 && $j != 15) {
 				$text .= $box[$i][$j]."|";
 			}
 		}
@@ -254,6 +259,8 @@ function getTableText($box) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>NBA Box Score Generator</title>
+
+	<link rel="shortcut icon" href="chalmers.ico"> 
 
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 
@@ -407,7 +414,8 @@ function getTableText($box) {
 ?>
 		<div class="row">
 			<div class="col-md-10 col-md-offset-1">
-				<h3 style="text-align: center">Game hasn't started or values are invalid.</h3>
+				<!--<h3 style="text-align: center">Game hasn't started or values are invalid.</h3>-->
+				<h3 style="text-align: center">Box Scores temporarily unavailable.</h3>
 			</div>
 		</div>
 <?php
