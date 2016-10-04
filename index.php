@@ -1,6 +1,7 @@
 <?php
 
 include 'simple_html_dom.php';
+date_default_timezone_set('America/New_York');
 
 // Get date from URL. if empty, choose today.
 $today = date("Ymd");
