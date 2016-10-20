@@ -3,17 +3,6 @@
 include 'simple_html_dom.php';
 date_default_timezone_set('America/New_York');
 
-// Get date from URL. if empty, choose today.
-$today = date("Ymd");
-$dateChosen = false;
-if (isset($_GET['date'])) {
-	$date = $_GET['date'];
-	$dateChosen = true;
-}
-else {
-	$date = dash($today);
-}
-
 $games = json_decode(file_get_contents("api/v1/games.json"), true);
 
 $ready = false;
@@ -439,7 +428,8 @@ function getShortName($teamName) {
 		<div class="row">
 			<div class="col-md-10 col-md-offset-1">
 				<!--<h3 style="text-align: center">Game hasn't started or values are invalid.</h3>-->
-				<h3 style="text-align: center">Box Scores temporarily unavailable.</h3>
+				<h3 style="text-align: center">Select a game from the list and click Go!</h3>
+				<p style="text-align: center">Empty list means no game have started.</p>
 			</div>
 		</div>
 <?php

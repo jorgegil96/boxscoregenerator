@@ -8,7 +8,7 @@ $NBC_SPORTS_SCORES_BASE_URL = 'http://scores.nbcsports.com';
 
 // Use today's date.
 $date = date("Ymd");
-$date = "20161019";
+//$date = "20161019";
 
 // Html with all games in it.
 $scoreboardHtml = getHtmlFromUrl($SCOREBOARD_BASE_URL.$date);
