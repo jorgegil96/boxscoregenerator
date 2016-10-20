@@ -14,68 +14,28 @@ else {
 	$date = dash($today);
 }
 
-// Games' data to get today's games
-$gamesData = json_decode(file_get_contents('http://data.nba.com/data/1h/json/cms/noseason/scoreboard/'.noDash($date).'/games.json'));
-$gamesData = $gamesData->sports_content->games;
+$games = json_decode(file_get_contents("api/v1/games.json"), true);
 
-// Get game ID from URL. If empty, choose first.
+$ready = false;
 if (isset($_GET['gameID'])) {
 	$gameID = $_GET['gameID'];
-} else {
-	$vKey = $gamesData->game[0]->visitor->team_key;
-	$hKey = $gamesData->game[0]->home->team_key;
-	$gameID = $vKey.$hKey;
+	$ready = true;
 }
-
-// Find box score status
-// != 1 means box score is available
-$ready = false;
-foreach ($gamesData->game as $game) {
-	$vKey = $game->visitor->team_key;
-	$hKey = $game->home->team_key;
-	if ($vKey.$hKey == $gameID) {
-		if ($game->period_time->game_status == 1)
-			$ready = false;
-		else
-			$ready = true;
-
-		break;
-	}
-}
-
-// DISABLE UNTIL NEW SCRAPPER IS READY
-$ready = false;
 
 if ($ready) {
-	// Get HTML from NBA.com
-	$html = file_get_html('http://www.nba.com/games/'.noDash($date).'/'.$gameID.'/gameinfo.html');
+	$gameChosen = $games['games'][$gameID];
 
-	// Navigate DOM to box scores tables
-	$teamA = $html->find("#nbaGITeamStats", 0); // Team A table
-	$teamB = $html->find("#nbaGITeamStats", 1); // Team B table
+	$visitorShort = getShortName($gameChosen['visitor']);
+	$visitorName = $gameChosen['visitor'];
+	$visitorScore = $gameChosen['visitor_score'];
+	$visitorBox = $gameChosen['visitor_boxscore'];
 
-	// Form 2D Array with box score data for each team
-	$awayBox = getBoxScore($teamA); 
-	$homeBox = getBoxScore($teamB);
+	$homeShort = getShortName($gameChosen['home']);
+	$homeName = $gameChosen['home'];
+	$homeScore = $gameChosen['home_score'];
+	$homeBox = $gameChosen['home_boxscore'];
 
-	// Final scores
-	$awayScore = $awayBox[count($awayBox) - 2][16];
-	$homeScore = $homeBox[count($homeBox) - 2][16];
-
-	//printBoxScore($awayBox);
-	//printBoxScore($homeBox);
-
-	foreach ($gamesData->game as $game) {
-		if (substr($game->game_url, 9) == $gameID) {
-			$awayName = $game->visitor->nickname;
-			$awayShort = $game->visitor->team_key;
-			$homeName = $game->home->nickname;
-			$homeShort = $game->home->team_key;
-			break;
-		}
-	}
-
-	$textToReddit = getRedditText($awayShort, $awayName, $awayScore, $awayBox, $homeShort, $homeName, $homeScore, $homeBox, $date);
+	$textToReddit = getRedditText($visitorShort, $visitorName, $visitorScore, $visitorBox, $homeShort, $homeName, $homeScore, $homeBox, $date);
 }
 
 /*
@@ -162,31 +122,35 @@ function printHTMLTable($name, $short, $boxscore) {
 					<th>FTM-A</th>
 					<th>+/-</th>
 					<th>OREB</th>
-					<th>DREB</th>
 					<th>REB</th>
 					<th>AST</th>
-					<th>PF</th>
+					<th>BLK</th>
 					<th>STL</th>
 					<th>TOV</th>
-					<th>BS</th>
+					<th>PF</th>
 					<th>PTS</th>
 				</tr>
 			</thead>
 			<tbody>
 <?php
 	$lenI = count($boxscore);
-	for ($i = 0; $i < $lenI - 1; $i++) {
+	for ($i = 1; $i < $lenI; $i++) {
 		$lenJ = count($boxscore[$i]); ?>
 				<tr>
 <?php
 		for ($j = 0; $j < $lenJ; $j++) {
-			// Don't show POS or BA
-			if ($j != 1 && $j != 15) {
+			// Don't show POS
+			if ($j != 1) {
 				if ($j == 0) {
 					echo "<td style='text-align: left'>".$boxscore[$i][$j]."</td>";
 				} else {
 					echo "<td>".$boxscore[$i][$j]."</td>";
 				}
+			} else {
+				// show if its a DNP - reason column
+				if (strlen($boxscore[$i][$j]) > 7) {
+					echo "<td colspan=13>".$boxscore[$i][$j]."</td>";
+				} 
 			}
 		}
 ?>
@@ -202,27 +166,18 @@ function printHTMLTable($name, $short, $boxscore) {
 }
 
 function getRedditText($awayShort, $awayName, $awayScore, $awayBox, $homeShort, $homeName, $homeScore, $homeBox, $date) {
-	$text = "|
-|
-
-||
-|:-:|
-|[](/".$awayShort.") **".$awayScore." - ".$homeScore."** [](/".$homeShort.")|
-|**Box Score: [NBA](http://www.nba.com/games/".noDash($date)."/".$awayShort.$homeShort."/gameinfo.html#nbaGIboxscore)**|
-";
-
 	$text .= "
-||||||||||||||||
-|:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-**[](/".$awayShort.") ".$awayName."**|**MIN**|**FGM-A**|**3PM-A**|**FTM-A**|**+/-**|**ORB**|**DRB**|**REB**|**AST**|**PF**|**STL**|**TO**|**BLK**|**PTS**|
+|||||||||||||||
+|:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+**[](/".$awayShort.") ".$awayName."**|**MIN**|**FGM-A**|**3PM-A**|**FTM-A**|**+/-**|**OREB**|**REB**|**AST**|**BLK**|**STL**|**TOV**|**PF**|**PTS**|
 ";
 
 	$text .= getTableText($awayBox);
 
 	$text .= "
-||||||||||||||||
-|:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-**[](/".$homeShort.") ".$homeName."**|**MIN**|**FGM-A**|**3PM-A**|**FTM-A**|**+/-**|**ORB**|**DRB**|**REB**|**AST**|**PF**|**STL**|**TO**|**BLK**|**PTS**|
+|||||||||||||||
+|:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+**[](/".$homeShort.") ".$homeName."**|**MIN**|**FGM-A**|**3PM-A**|**FTM-A**|**+/-**|**OREB**|**REB**|**AST**|**BLK**|**STL**|**TOV**|**PF**|**PTS**|
 ";
 
 	$text .= getTableText($homeBox);
@@ -230,7 +185,7 @@ function getRedditText($awayShort, $awayName, $awayScore, $awayBox, $homeShort, 
 	$text .= "
 ||
 |:-:|
-|^Generator: [^Excel](https://drive.google.com/file/d/0B81kEjcFfuavUmUyUk5OLVAtYzg/view?usp=sharing) ^by ^/u/imeanYOLOright  ^&  ^Web(nbaboxscoregenerator ^.tk) ^by ^/u/jorgegil96|";
+|^Generator: ^Web(nbaboxscoregenerator ^.tk) ^by ^/u/jorgegil96|";
 
 	return $text;
 
@@ -239,16 +194,87 @@ function getRedditText($awayShort, $awayName, $awayScore, $awayBox, $homeShort, 
 function getTableText($box) {
 	$text = "";
 	$lenI = count($box);
-	for ($i = 0; $i < $lenI - 1; $i++) {
+	for ($i = 1; $i < $lenI; $i++) {
 		$lenJ = count($box[$i]);
 		for ($j = 0; $j < $lenJ; $j++) {
-			if ($j != 1 && $j != 15) {
+			if ($j != 1) {
 				$text .= $box[$i][$j]."|";
+			} else {
+				if (strlen($box[$i][$j]) > 7) {
+					//$text .= $box[$i][$j]."|";
+				}
 			}
 		}
 		$text .= "\n";
 	}
 	return $text;
+}
+
+function getShortName($teamName) {
+	switch ($teamName) {
+		case 'Boston':
+			return "BOS";
+		case 'Broolyn':
+			return "BKN";
+		case 'New York':
+			return "NYK";
+		case 'Philadelphia':
+			return "PHI";
+		case 'Toronto':
+			return "TOR";
+		case 'Chicago':
+			return "CHI";
+		case 'Cleveland':
+			return "CLE";
+		case 'Detroit':
+			return "DET";
+		case 'Indiana':
+			return "IND";
+		case 'Milwaukee':
+			return "MIL";
+		case 'Atlanta':
+			return "ATL";
+		case 'Charlotte':
+			return "CHA";
+		case 'Miami':
+			return "MIA";
+		case 'Orlando':
+			return "ORL";
+		case 'Washington':
+			return "WAS";
+		case 'Golden State':
+			return "GSW";
+		case 'LA Clippers':
+			return "LAC";
+		case 'LA Lakers':
+			return "LAL";
+		case 'Phoenix':
+			return "PHX";
+		case 'Sacramento':
+			return "SAC";
+		case 'Dallas':
+			return "DAL";
+		case 'Houston':
+			return "HOU";
+		case 'Memphis':
+			return "MEM";
+		case 'New Orleans':
+			return "NOP";
+		case 'San Antonio':
+			return "SAS";
+		case 'Denver':
+			return "DEN";
+		case 'Minnesota':
+			return "MIN";
+		case 'Oklahoma City':
+			return "OKC";
+		case 'Portland':
+			return "POR";
+		case 'Utah':
+			return "UTA";
+		default:
+			return "";
+	}
 }
 
 ?>
@@ -344,6 +370,7 @@ function getTableText($box) {
 			<div class="col-md-3 col-md-offset-2">
 
 				<!-- FORM TO CHOOSE DATE -->
+				<!--
 				<form action="" method="GET">
 					<div class="row">
 						<div class="col-md-10" style="padding-right: 5px">
@@ -357,26 +384,24 @@ function getTableText($box) {
 						</div>
 					</div>
 				</form>
+				-->
 
 				<form action="" method="GET">
 					<div class="row" style="margin-top: 15px">
 						<div class="col-md-8">
 							<select name="gameID">
 							<?
-							foreach ($gamesData->game as $game) {
-								$vKey = $game->visitor->team_key;
-								$hKey = $game->home->team_key;
-								$matchup = $vKey." @ ".$hKey;
+							foreach($games['games'] as $game) {
+								$id = $game['id'];
+								$visitor = $game['visitor'];
+								$home = $game['home'];
+								$matchup = $visitor." @ ".$home;
 
-								if ($vKey.$hKey == $gameID) {
-									echo "<option value='".$vKey.$hKey."' selected>".$matchup."</option>";
-								} else {
-									echo "<option value='".$vKey.$hKey."'>".$matchup."</option>";
-								}
+								echo "<option value='".$id."'>".$matchup."</option>";
 							}
 							?>
 							</select>
-							<input type="hidden" name="date" value="<?php echo $date; ?>"></input>
+							<!--<input type="hidden" name="date" value="<?php echo $date; ?>"></input>-->
 							<input type="submit" value="Go!" class="btn btn-primary">
 						</div>
 					</div>
@@ -385,9 +410,7 @@ function getTableText($box) {
 
 			</div>
 			<div class="col-md-6 col-md-offset-1">
-				<p>Made for <a href="http://reddit.com/r/nba">/r/NBA</a> by <a href="http://reddit.com/user/jorgegil96">/u/jorgegil96.</a><br>
-				Thanks to <a href="http://reddit.com/user/imeanYOLOright">/u/imeanYOLOright</a> for his original Excel design
-				and to the creator of <a href="https://github.com/seemethere/nba_py">NBA_PY</a> and its incredible documentation of the NBA API.</p>
+				<p>Made for <a href="http://reddit.com/r/nba">/r/NBA</a> by <a href="http://reddit.com/user/jorgegil96">/u/jorgegil96.</a>
 				<br>
 				Report any issues on <a href="https://github.com/jorgegil96/boxscoregenerator">Github <i class="mdi mdi-github-circle"></i></a> or send me a <a href="http://reddit.com/user/jorgegil96">PM</a>.
 			</div>
@@ -399,8 +422,8 @@ function getTableText($box) {
 	if ($ready) {
 
 		// Print HTML box score tables
-		printHTMLTable($awayName, $awayShort, $awayBox);
-		printHTMLTable($homeName, $homeShort, $homeBox);
+		printHTMLTable($games['games'][$gameID]['visitor'], $games['games'][$gameID]['visitor'], $games['games'][$gameID]['visitor_boxscore']);
+		printHTMLTable($games['games'][$gameID]['home'], $games['games'][$gameID]['home'], $games['games'][$gameID]['home_boxscore']);
 ?>
 
 		<div class="row">
