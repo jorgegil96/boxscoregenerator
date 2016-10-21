@@ -106,9 +106,9 @@ function printHTMLTable($name, $short, $boxscore) {
 				<tr style='font-weight: bold'>
 					<th style='text-align: left'><?php echo $name; ?></th>
 					<th>MIN</th>
-					<th>FGM-A</th>
-					<th>3PM-A</th>
-					<th>FTM-A</th>
+					<th>FG</th>
+					<th>FT</th>
+					<th>3PT</th>
 					<th>+/-</th>
 					<th>OREB</th>
 					<th>REB</th>
