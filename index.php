@@ -158,7 +158,7 @@ function getRedditText($awayShort, $awayName, $awayScore, $awayBox, $homeShort, 
 	$text .= "
 |||||||||||||||
 |:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-**[](/".$awayShort.") ".$awayName."**|**MIN**|**FGM-A**|**3PM-A**|**FTM-A**|**+/-**|**OREB**|**REB**|**AST**|**BLK**|**STL**|**TOV**|**PF**|**PTS**|
+**[](/".$awayShort.") ".$awayName."**|**MIN**|**FG**|**FT**|**3PT**|**+/-**|**OREB**|**REB**|**AST**|**BLK**|**STL**|**TOV**|**PF**|**PTS**|
 ";
 
 	$text .= getTableText($awayBox);
@@ -166,7 +166,7 @@ function getRedditText($awayShort, $awayName, $awayScore, $awayBox, $homeShort, 
 	$text .= "
 |||||||||||||||
 |:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-**[](/".$homeShort.") ".$homeName."**|**MIN**|**FGM-A**|**3PM-A**|**FTM-A**|**+/-**|**OREB**|**REB**|**AST**|**BLK**|**STL**|**TOV**|**PF**|**PTS**|
+**[](/".$homeShort.") ".$homeName."**|**MIN**|**FG**|**FT**|**3PT**|**+/-**|**OREB**|**REB**|**AST**|**BLK**|**STL**|**TOV**|**PF**|**PTS**|
 ";
 
 	$text .= getTableText($homeBox);
