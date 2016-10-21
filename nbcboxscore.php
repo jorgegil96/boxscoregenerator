@@ -56,8 +56,14 @@ function getGameMatchups($links) {
 
 function getBoxscore($html) {
 	$htmlBoxscore = $html->find('div[id=shsBoxscore]', 0);
-	$htmlTeamABoxscore = $htmlBoxscore->find('table[class=shsBorderTable]', 0);
-	$htmlTeamBBoxscore = $htmlBoxscore->find('table[class=shsBorderTable]', 1);
+	$tables = $htmlBoxscore->find('table[class=shsBorderTable]');
+	if (sizeof($tables) == 2) {
+		$htmlTeamABoxscore = $tables[0];
+		$htmlTeamBBoxscore = $tables[1];
+	}else if(sizeof($tables) == 3) {
+		$htmlTeamABoxscore = $tables[1];
+		$htmlTeamBBoxscore = $tables[2];
+	}
 
 	$teamABoxscore = parseHtmlBoxscore($htmlTeamABoxscore);
 	$teamBBoxscore = parseHtmlBoxscore($htmlTeamBBoxscore);
@@ -91,7 +97,8 @@ function parseHtmlBoxscore($htmlTeamBoxScore) {
 
 	// Add a row for team total stats.
 	$totalsRow = [];
-	foreach($htmlTeamBoxScore->find('tr[class=shsColTtlRow]', 1)->find('td') as
+	$tr = $htmlTeamBoxScore->find('tr[class=shsColTtlRow]', 1);
+	foreach($tr->find('td') as
 		$totalElem) {
 		array_push($totalsRow, str_replace("<br>", "", $totalElem->innertext));
 	} 
