@@ -110,7 +110,7 @@ function printHTMLTable($name, $short, $boxscore) {
 					<th>FT</th>
 					<th>3PT</th>
 					<th>+/-</th>
-					<th>OREB</th>
+					<th>ORB</th>
 					<th>REB</th>
 					<th>AST</th>
 					<th>BLK</th>
@@ -156,17 +156,15 @@ function printHTMLTable($name, $short, $boxscore) {
 
 function getRedditText($awayShort, $awayName, $awayScore, $awayBox, $homeShort, $homeName, $homeScore, $homeBox, $date) {
 	$text .= "
-|||||||||||||||
+**[](/".$awayShort.") ".$awayShort."**|**MIN**|**FG**|**FT**|**3PT**|**+/-**|**ORB**|**REB**|**AST**|**BLK**|**STL**|**TOV**|**PF**|**PTS**|
 |:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-**[](/".$awayShort.") ".$awayName."**|**MIN**|**FG**|**FT**|**3PT**|**+/-**|**OREB**|**REB**|**AST**|**BLK**|**STL**|**TOV**|**PF**|**PTS**|
 ";
 
 	$text .= getTableText($awayBox);
 
 	$text .= "
-|||||||||||||||
+**[](/".$homeShort.") ".$homeShort."**|**MIN**|**FG**|**FT**|**3PT**|**+/-**|**ORB**|**REB**|**AST**|**BLK**|**STL**|**TOV**|**PF**|**PTS**|
 |:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-**[](/".$homeShort.") ".$homeName."**|**MIN**|**FG**|**FT**|**3PT**|**+/-**|**OREB**|**REB**|**AST**|**BLK**|**STL**|**TOV**|**PF**|**PTS**|
 ";
 
 	$text .= getTableText($homeBox);
