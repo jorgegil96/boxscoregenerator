@@ -86,7 +86,15 @@ function parseHtmlBoxscore($htmlTeamBoxScore) {
 	$box[0] = [];
 	foreach($htmlTeamBoxScore->find('tr[class=shsColTtlRow]', 0)->find('td') as
 		$headerElem) {
-		array_push($box[0], $headerElem->innertext);
+		$headerText = $headerElem->innertext;
+		if ($headerText == "FGM-FGA") {
+			$headerText = "FG";
+		} else if ($headerText == "FTM-FTA") {
+			$headerText = "FT";
+		} else if ($headerText == "3PM-3PA") {
+			$headerText = "3PT";
+		}
+		array_push($box[0], $headerText);
 	}
 
 	// Add a rows with stats for each player.

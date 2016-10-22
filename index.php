@@ -105,19 +105,15 @@ function printHTMLTable($name, $short, $boxscore) {
 			<thead>
 				<tr style='font-weight: bold'>
 					<th style='text-align: left'><?php echo $name; ?></th>
-					<th>MIN</th>
-					<th>FG</th>
-					<th>FT</th>
-					<th>3PT</th>
-					<th>+/-</th>
-					<th>ORB</th>
-					<th>REB</th>
-					<th>AST</th>
-					<th>BLK</th>
-					<th>STL</th>
-					<th>TOV</th>
-					<th>PF</th>
-					<th>PTS</th>
+					<?php
+					$numCols = count($boxscore[0]);
+					for($i = 0; $i < $numCols; $i++) {
+						// Don't show Player and POS
+						if ($i >= 2) {
+							echo "<th>".$boxscore[0][$i]."</th>";
+						}
+					}
+					?>
 				</tr>
 			</thead>
 			<tbody>
@@ -156,14 +152,32 @@ function printHTMLTable($name, $short, $boxscore) {
 
 function getRedditText($awayShort, $awayName, $awayScore, $awayBox, $homeShort, $homeName, $homeScore, $homeBox, $date) {
 	$text .= "
-**[](/".$awayShort.") ".$awayShort."**|**MIN**|**FG**|**FT**|**3PT**|**+/-**|**ORB**|**REB**|**AST**|**BLK**|**STL**|**TOV**|**PF**|**PTS**|
+**[](/".$awayShort.") ".$awayShort."**|";
+	
+	$numCols = count($awayBox[0]);
+	for($i = 0; $i < $numCols; $i++) {
+		if ($i >= 2) {
+			$text .= "**".$awayBox[0][$i]."**|";
+		}
+	}
+
+
+	$text .= "
 |:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 ";
 
 	$text .= getTableText($awayBox);
 
 	$text .= "
-**[](/".$homeShort.") ".$homeShort."**|**MIN**|**FG**|**FT**|**3PT**|**+/-**|**ORB**|**REB**|**AST**|**BLK**|**STL**|**TOV**|**PF**|**PTS**|
+**[](/".$homeShort.") ".$homeShort."**|";
+	$numCols = count($homeBox[0]);
+	for($i = 0; $i < $numCols; $i++) {
+		if ($i >= 2) {
+			$text .= "**".$homeBox[0][$i]."**|";
+		}
+	}
+
+	$text .= "
 |:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 ";
 
