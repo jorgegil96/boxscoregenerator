@@ -10,17 +10,42 @@ $NBC_SPORTS_SCORES_BASE_URL = 'http://scores.nbcsports.com';
 $date = date("Ymd");
 //$date = "20161019";
 
-// Html with all games in it.
-$scoreboardHtml = getHtmlFromUrl($SCOREBOARD_BASE_URL.$date);
-
-$boxscores = [];
-$matchups = getGameMatchups($scoreboardHtml->find('a'));
-foreach($matchups as $game) {
-	if ($game[2] != null) {
-		array_push($boxscores, getBoxscore(getHtmlFromUrl($game[2])));
+$weekDay = date("N"); // 1 for Monday through 7 for Sunday
+$time = date("H");
+// Games schedule:
+// M-F  17:30 - 23:30 
+// S-S  9:30 - 23:30
+$shouldScrape = false;
+if ($weekDay < 6) {
+	if ($time >= 5 && $time <= 23) {
+		$shouldScrape = true;
+	}
+} else {
+	if ($time >= 9 && $time <= 23) {
+		$shouldScrape = true;
 	}
 }
-saveBoxScoreJson($boxscores);
+
+echo "Scraping: ";
+if ($shouldScrape) {
+	echo "ON";
+} else {
+	echo "OFF";
+}
+
+if ($shouldScrape) {
+	// Html with all games in it.
+	$scoreboardHtml = getHtmlFromUrl($SCOREBOARD_BASE_URL.$date);
+
+	$boxscores = [];
+	$matchups = getGameMatchups($scoreboardHtml->find('a'));
+	foreach($matchups as $game) {
+		if ($game[2] != null) {
+			array_push($boxscores, getBoxscore(getHtmlFromUrl($game[2])));
+		}
+	}
+	saveBoxScoreJson($boxscores);
+}
 
 /*
 * Returns an HTML document from the given URL.
@@ -204,8 +229,6 @@ function saveBoxScoreJson($boxscores) {
 	}
 	$result = [];
 	$result['games'] = $gamesJson;
-
-	echo json_encode($result);
 
 	$fp = fopen('api/v1/games.json', 'w');
 	fwrite($fp, json_encode($result));
