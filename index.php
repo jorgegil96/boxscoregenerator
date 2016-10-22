@@ -196,10 +196,8 @@ function getTableText($box) {
 	$text = "";
 	$lenI = count($box);
 	$numCols = count($box[0]);
-	echo $numCols;
 	for ($i = 1; $i < $lenI; $i++) {
 		$lenJ = count($box[$i]);
-		echo $lenJ;
 		for ($j = 0; $j < $lenJ; $j++) {
 			if ($j != 1) {
 				$text .= $box[$i][$j]."|";
