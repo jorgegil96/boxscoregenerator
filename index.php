@@ -195,8 +195,11 @@ function getRedditText($awayShort, $awayName, $awayScore, $awayBox, $homeShort, 
 function getTableText($box) {
 	$text = "";
 	$lenI = count($box);
+	$numCols = count($box[0]);
+	echo $numCols;
 	for ($i = 1; $i < $lenI; $i++) {
 		$lenJ = count($box[$i]);
+		echo $lenJ;
 		for ($j = 0; $j < $lenJ; $j++) {
 			if ($j != 1) {
 				$text .= $box[$i][$j]."|";
@@ -204,6 +207,11 @@ function getTableText($box) {
 				if (strlen($box[$i][$j]) > 7) {
 					//$text .= $box[$i][$j]."|";
 				}
+			}
+		}
+		if ($lenJ < $numCols) {
+			for ($j = 0; $j < $numCols - $lenJ; $j++) {
+				$text .= "|";
 			}
 		}
 		$text .= "\n";
