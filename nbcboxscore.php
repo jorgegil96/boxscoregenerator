@@ -3,7 +3,7 @@ include 'simple_html_dom.php';
 date_default_timezone_set('America/Los_Angeles');
 
 // This URL provides all games from to the given date("yyyymmdd").
-$SCOREBOARD_BASE_URL = 'http://msnbchosted.stats.com/nba/scoreboard.asp?seasontype=pre&day=';
+$SCOREBOARD_BASE_URL = 'http://msnbchosted.stats.com/nba/scoreboard.asp?day=';
 $NBC_SPORTS_SCORES_BASE_URL = 'http://scores.nbcsports.com';
 
 // Use today's date.
