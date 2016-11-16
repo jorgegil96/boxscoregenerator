@@ -186,7 +186,7 @@ function getRedditText($awayShort, $awayName, $awayScore, $awayBox, $homeShort, 
 	$text .= "
 ||
 |:-:|
-|^Generator: ^Web(nbaboxscoregenerator ^.tk) ^by ^/u/jorgegil96|";
+|^[nbaboxscoregenerator.com](http://www.nbaboxscoregenerator.com) ^by ^/u/jorgegil96|";
 
 	return $text;
 
