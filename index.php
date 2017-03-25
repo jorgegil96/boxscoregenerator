@@ -24,14 +24,18 @@ if ($ready) {
 	$homeScore = $gameChosen['home_score'];
 	$homeBox = $gameChosen['home_boxscore'];
 
+	echo "home: ".$homeShort." - "." away: ".$awayShort;
+
 	$textToReddit = getRedditText($visitorShort, $visitorName, $visitorScore, $visitorBox, $homeShort, $homeName, $homeScore, $homeBox, $date);
 
 	$date = date("Ymd");
-	$firebaseGames = json_decode(file_get_contents("https://nba-app-ca681.firebaseio.com/nba/".$date."/games"));
+	$firebaseGames = json_decode(file_get_contents("https://nba-app-ca681.firebaseio.com/nba/".$date."/games.json"));
 
 	$nbaDate = "";
 	$nbaID = "";
 	foreach($firebaseGames as $firebaseGame) {
+		echo $firebaseGame["awayTeamKey"]."<br>";
+		echo $firebaseGame["homeTeamKey"]."<br>";
 		if ($firebaseGame["awayTeamKey"] == $visitorShort || $firebaseGame["homeTeamKey"] == $homeShort) {
 			$nbaDate = $firebaseGame["date"];
 			$nbaID = $firebaseGame["id"];
