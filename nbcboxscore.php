@@ -8,7 +8,7 @@ $NBC_SPORTS_SCORES_BASE_URL = 'http://scores.nbcsports.com';
 
 // Use today's date.
 $date = date("Ymd");
-//$date = "20161019";
+//$date = "20170324";
 
 $weekDay = date("N"); // 1 for Monday through 7 for Sunday
 $time = date("H");

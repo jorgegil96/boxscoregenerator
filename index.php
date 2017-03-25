@@ -24,18 +24,14 @@ if ($ready) {
 	$homeScore = $gameChosen['home_score'];
 	$homeBox = $gameChosen['home_boxscore'];
 
-	echo "home: ".$homeShort." - "." away: ".$visitorShort;
+	$textToReddit = getRedditText($visitorShort, $visitorName, $visitorScore, $visitorBox, $homeShort, $homeName, $homeScore, $homeBox);
 
-	$textToReddit = getRedditText($visitorShort, $visitorName, $visitorScore, $visitorBox, $homeShort, $homeName, $homeScore, $homeBox, $date);
-
-	$date = date("Ymd");
-	$firebaseGames = json_decode(file_get_contents("https://nba-app-ca681.firebaseio.com/nba/".$date."/games.json"));
+	$dateToday = date("Ymd");
+	$firebaseGames = json_decode(file_get_contents("https://nba-app-ca681.firebaseio.com/nba/".$dateToday."/games.json"), true);
 
 	$nbaDate = "";
 	$nbaID = "";
 	foreach($firebaseGames as $firebaseGame) {
-		echo $firebaseGame["awayTeamKey"]."<br>";
-		echo $firebaseGame["homeTeamKey"]."<br>";
 		if ($firebaseGame["awayTeamKey"] == $visitorShort || $firebaseGame["homeTeamKey"] == $homeShort) {
 			$nbaDate = $firebaseGame["date"];
 			$nbaID = $firebaseGame["id"];
@@ -43,7 +39,7 @@ if ($ready) {
 		}
 	}
 
-	$textToReddit = "[ballislife.io Box Score](http://ballislife.io/game/".$nbaDate."/".$nbaID.") \n\n".$textToReddit;
+	$textToReddit = "[Box Score](http://ballislife.io/game/".$nbaDate."/".$nbaID.") \n\n".$textToReddit;
 }
 
 
@@ -171,8 +167,8 @@ function printHTMLTable($name, $short, $boxscore) {
 <?php
 }
 
-function getRedditText($awayShort, $awayName, $awayScore, $awayBox, $homeShort, $homeName, $homeScore, $homeBox, $date) {
-	$text .= "
+function getRedditText($awayShort, $awayName, $awayScore, $awayBox, $homeShort, $homeName, $homeScore, $homeBox) {
+	$text = "
 **[](/".$awayShort.") ".$awayShort."**|";
 	
 	$numCols = count($awayBox[0]);
