@@ -24,7 +24,7 @@ if ($ready) {
 	$homeScore = $gameChosen['home_score'];
 	$homeBox = $gameChosen['home_boxscore'];
 
-	echo "home: ".$homeShort." - "." away: ".$awayShort;
+	echo "home: ".$homeShort." - "." away: ".$visitorShort;
 
 	$textToReddit = getRedditText($visitorShort, $visitorName, $visitorScore, $visitorBox, $homeShort, $homeName, $homeScore, $homeBox, $date);
 
