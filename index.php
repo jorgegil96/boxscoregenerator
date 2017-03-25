@@ -25,7 +25,24 @@ if ($ready) {
 	$homeBox = $gameChosen['home_boxscore'];
 
 	$textToReddit = getRedditText($visitorShort, $visitorName, $visitorScore, $visitorBox, $homeShort, $homeName, $homeScore, $homeBox, $date);
+
+	$date = date("Ymd");
+	$firebaseGames = json_decode(file_get_contents("https://nba-app-ca681.firebaseio.com/nba/".$date."/games"));
+
+	$nbaDate = "";
+	$nbaID = "";
+	foreach($firebaseGames as $firebaseGame) {
+		if ($firebaseGame["awayTeamKey"] == $visitorShort || $firebaseGame["homeTeamKey"] == $homeShort) {
+			$nbaDate = $firebaseGame["date"];
+			$nbaID = $firebaseGame["id"];
+			break;
+		}
+	}
+
+	$textToReddit = "[ballislife.io Box Score](http://ballislife.io/game/".$nbaDate."/".$nbaID.") \n\n".$textToReddit;
 }
+
+
 
 /*
  * Function getBoxScore
@@ -417,9 +434,9 @@ function getShortName($teamName) {
 
 			</div>
 			<div class="col-md-6 col-md-offset-1">
-				<p>Made for <a href="http://reddit.com/r/nba">/r/NBA</a> by <a href="http://reddit.com/user/jorgegil96">/u/jorgegil96.</a>
+				<p>Made for <a href="http://reddit.com/r/nba">/r/NBA</a> by <a href="http://reddit.com/user/Obi-Wan_Ginobili">/u/Obi-Wan_Ginobili.</a>
 				<br>
-				Report any issues on <a href="https://github.com/jorgegil96/boxscoregenerator">Github <i class="mdi mdi-github-circle"></i></a> or send me a <a href="http://reddit.com/user/jorgegil96">PM</a>.
+				Report any issues on <a href="https://github.com/jorgegil96/boxscoregenerator">Github <i class="mdi mdi-github-circle"></i></a> or send me a <a href="http://reddit.com/user/Obi-Wan_Ginobili">PM</a>.
 			</div>
 		</div> <!-- End row -->
 
