@@ -39,7 +39,10 @@ if ($ready) {
 		}
 	}
 
-	$textToReddit = "[Box Score](http://ballislife.io/game/".$nbaDate."/".$nbaID.") \n\n".$textToReddit;
+	$ballislifebs = "[ballislife.io](http://ballislife.io/game/".$nbaDate."/".$nbaID.")";
+	$boxscoreandmorebs = "[boxscoreandmore.com](https://www.boxscoreandmore.com/#/boxscore/".$nbaID."/game)";
+
+	$textToReddit = "Box Scores: ".$ballislifebs." | ".$boxscoreandmore." \n\n".$textToReddit;
 }
 
 
