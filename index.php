@@ -42,7 +42,7 @@ if ($ready) {
 	$ballislifebs = "[ballislife.io](http://ballislife.io/game/".$nbaDate."/".$nbaID.")";
 	$boxscoreandmorebs = "[boxscoreandmore.com](https://www.boxscoreandmore.com/#/boxscore/".$nbaID."/game)";
 
-	$textToReddit = "Box Scores: ".$ballislifebs." | ".$boxscoreandmore." \n\n".$textToReddit;
+	$textToReddit = "Box Scores: ".$ballislifebs." | ".$boxscoreandmorebs." \n\n".$textToReddit;
 }
 
 
