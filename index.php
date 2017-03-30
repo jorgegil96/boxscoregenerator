@@ -1,7 +1,7 @@
 <?php
 
 include 'simple_html_dom.php';
-date_default_timezone_set('America/New_York');
+date_default_timezone_set('America/Los_Angeles');
 
 $games = json_decode(file_get_contents("api/v1/games.json"), true);
 
