@@ -3,7 +3,7 @@ include 'simple_html_dom.php';
 date_default_timezone_set('America/Los_Angeles');
 
 // This URL provides all games from to the given date("yyyymmdd").
-$SCOREBOARD_BASE_URL = 'http://msnbchosted.stats.com/nba/scoreboard.asp?day=';
+$SCOREBOARD_BASE_URL = 'http://scores.nbcsports.com/nba/scoreboard.asp?day=';
 $NBC_SPORTS_SCORES_BASE_URL = 'http://scores.nbcsports.com';
 
 // Use today's date.
@@ -13,7 +13,7 @@ $date = date("Ymd");
 $weekDay = date("N"); // 1 for Monday through 7 for Sunday
 $time = date("H");
 // Games schedule:
-// M-F  17:30 - 23:30 
+// M-F  17:30 - 23:30
 // S-S  9:30 - 23:30
 $shouldScrape = false;
 if ($weekDay < 6) {
@@ -65,18 +65,17 @@ function getGameMatchups($links) {
 		if ($link->innertext == "Box") {
 			$matchups[$gameCount - 1][2] = $GLOBALS['NBC_SPORTS_SCORES_BASE_URL'].substr($link->href, 0, 37);
 		}
-
 		if (substr($link->href, 0, strlen("/nba/teamstats.asp")) === "/nba/teamstats.asp") {
 			$matchups[$gameCount][$teamCount] = $link->innertext;
 			$teamCount++;
 		}
-		
 		if ($teamCount == 2) {
 			$gameCount++;
 			$teamCount = 0;
 		}
 	}
 	return $matchups;
+
 }
 
 function getBoxscore($html) {
@@ -92,7 +91,7 @@ function getBoxscore($html) {
 
 	$teamABoxscore = parseHtmlBoxscore($htmlTeamABoxscore);
 	$teamBBoxscore = parseHtmlBoxscore($htmlTeamBBoxscore);
-	
+
 	return [$teamABoxscore, $teamBBoxscore];
 }
 
@@ -134,7 +133,7 @@ function parseHtmlBoxscore($htmlTeamBoxScore) {
 	foreach($tr->find('td') as
 		$totalElem) {
 		array_push($totalsRow, str_replace("<br>", "", $totalElem->innertext));
-	} 
+	}
 	array_push($box, $totalsRow);
 
 	return [$teamName, $box];
@@ -236,25 +235,3 @@ function saveBoxScoreJson($boxscores) {
 }
 
 ?>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
