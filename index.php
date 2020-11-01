@@ -38,11 +38,6 @@ if ($ready) {
 			break;
 		}
 	}
-
-	$ballislifebs = "[ballislife.io](http://ballislife.io/game/".$nbaDate."/".$nbaID.")";
-	$boxscoreandmorebs = "[boxscoreandmore.com](https://www.boxscoreandmore.com/#/boxscore/".$nbaID."/game)";
-
-	$textToReddit = "Box Scores: ".$ballislifebs." | ".$boxscoreandmorebs." \n\n".$textToReddit;
 }
 
 
@@ -468,7 +463,13 @@ function getShortName($teamName) {
 			<div class="col-md-10 col-md-offset-1">
 				<!--<h3 style="text-align: center">Game hasn't started or values are invalid.</h3>-->
 				<h3 style="text-align: center">Select a game from the list and click Go!</h3>
-				<p style="text-align: center">Empty list means no game have started.</p>
+				<p style="text-align: center">Empty list means no games have started.</p>
+				<br><br>
+		
+				<a href="https://play.google.com/store/apps/details?id=com.gmail.jorgegilcavazos.ballislife">
+					<h4 style="text-align: center">Download Swish! An android app I made for /r/NBA</h4>
+					<img style="display: block; margin: auto;" width="200" src="play_button.png">
+				</a>
 			</div>
 		</div>
 <?php
